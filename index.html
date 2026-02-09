@@ -12,7 +12,9 @@
       --card:#ffffffcc;
       --text:#1f1f1f;
       --yes:#22c55e;
+      --yesHover:#16a34a;
       --no:#ef4444;
+      --noHover:#dc2626;
     }
 
     *{box-sizing:border-box}
@@ -37,14 +39,19 @@
       backdrop-filter: blur(10px);
       box-shadow: 0 20px 60px rgba(0,0,0,.18);
       text-align:center;
-      position:relative;
     }
 
     h1{margin:0 0 10px}
+
+    .intro{
+      font-size:14px;
+      opacity:0.8;
+      margin-bottom:10px;
+    }
+
     p{margin:0 0 18px}
 
-    .gif{<img src="https://media.giphy.com/media/7vDoUoDZHoUQxMPkd7/giphy.gif" alt="CR7 SIUUU">
-
+    .media{
       width:260px;
       height:260px;
       margin:14px auto 18px;
@@ -54,10 +61,9 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      box-shadow: 0 10px 30px rgba(0,0,0,.12);
     }
 
-    .gif img{
+    .media img{
       width:100%;
       height:100%;
       object-fit:cover;
@@ -67,10 +73,10 @@
       display:flex;
       justify-content:center;
       align-items:center;
-      gap:14px;
+      gap:60px;
       margin-top:12px;
       position:relative;
-      height:80px;
+      height:100px;
     }
 
     button{
@@ -81,7 +87,6 @@
       font-weight:800;
       font-size:16px;
       transition:.15s;
-      white-space:nowrap;
     }
 
     #yesBtn{
@@ -94,67 +99,51 @@
       background:var(--no);
       color:white;
       position:absolute;
-      left:60%;
+      left:70%;
       top:50%;
       transform:translate(-50%,-50%);
     }
 
     .hidden{display:none}
-
-    /* Coeurs */
-    .heart{
-      position:absolute;
-      width:14px;height:14px;
-      transform: rotate(45deg);
-      background: rgba(255,255,255,.7);
-      animation: float 6s linear infinite;
-      pointer-events:none;
-    }
-    .heart::before,.heart::after{
-      content:"";
-      position:absolute;
-      width:14px;height:14px;
-      background:inherit;
-      border-radius:50%;
-    }
-    .heart::before{left:-7px}
-    .heart::after{top:-7px}
-
-    @keyframes float{
-      from{transform:translateY(40vh) rotate(45deg);opacity:0}
-      10%{opacity:.8}
-      to{transform:translateY(-70vh) rotate(45deg);opacity:0}
-    }
   </style>
 </head>
 
 <body>
 
-<!-- Ecran 1 -->
 <div class="card" id="screen1">
-  <h1 id="question">Tu veux être ma Valentine ? 🍓</h1>
+
+  <h1>Tu veux être ma Valentine ? 🍓</h1>
+
+  <div class="intro">
+    Franui et bouquet trop beaux garantis si bonne réponse cochée
+  </div>
+
   <p id="sub">Réfléchis bien 😌</p>
 
-  <div class="gif">
-    <img src="franui-roses.png" alt="Franui">
+  <div class="media">
+    <img src="franui-roses.png" alt="Franui et roses">
   </div>
 
   <div class="btns" id="btnArea">
     <button id="yesBtn">Oui</button>
     <button id="noBtn">Non</button>
   </div>
+
 </div>
 
-<!-- Ecran 2 -->
 <div class="card hidden" id="screen2">
   <h1>OUIIII 💖</h1>
 
-  <div class="gif">
+  <div class="media">
     <img src="https://media.giphy.com/media/7vDoUoDZHoUQxMPkd7/giphy.gif" alt="CR7 SIUUU">
   </div>
 
   <p style="font-size:18px;font-weight:800;">
     Pas de stress, mais si jamais t’es libre le 14 au soir (ou une autre date à ta guise) pour perdre au petit bac contre moi 😏
+    <br><br>
+    <span style="font-size:14px;opacity:0.8;">
+      (en même temps je te donne ton cadeau de noël)
+    </span>
   </p>
 </div>
 
@@ -181,27 +170,19 @@ let scale=1;
 function moveNo(){
   const rect=btnArea.getBoundingClientRect();
   const btnRect=noBtn.getBoundingClientRect();
-
-  const padding=8;
-  const maxX=Math.max(0, rect.width-btnRect.width-padding);
-  const maxY=Math.max(0, rect.height-btnRect.height-padding);
-
-  const x=padding+Math.random()*maxX;
-  const y=padding+Math.random()*maxY;
-
+  const maxX=Math.max(0, rect.width-btnRect.width);
+  const maxY=Math.max(0, rect.height-btnRect.height);
+  const x=Math.random()*maxX;
+  const y=Math.random()*maxY;
   noBtn.style.left=x+"px";
   noBtn.style.top=y+"px";
   noBtn.style.transform="none";
 }
 
-}
-
 function growYes(){
-  scale=Math.min(3,scale+0.2);
+  scale=Math.min(2.2,scale+0.15);
   yesBtn.style.transform="scale("+scale+")";
 }
-
-noBtn.addEventListener("mouseenter", ()=>{ if(count>0) moveNo(); });
 
 noBtn.addEventListener("click",()=>{
   count++;
@@ -213,25 +194,8 @@ noBtn.addEventListener("click",()=>{
 yesBtn.addEventListener("click",()=>{
   screen1.classList.add("hidden");
   screen2.classList.remove("hidden");
-
-  // pluie de coeurs
-  for(let i=0;i<25;i++){
-    setTimeout(()=>{
-      const h=document.createElement("div");
-      h.className="heart";
-      h.style.left=Math.random()*100+"vw";
-      document.body.appendChild(h);
-      setTimeout(()=>h.remove(),6000);
-    },i*80);
-  }
-
-  // vibration mobile si dispo
-  if(navigator.vibrate){
-    navigator.vibrate([120,60,120]);
-  }
 });
 </script>
 
 </body>
 </html>
-
