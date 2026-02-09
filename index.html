@@ -1,1 +1,343 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Valentine</title>
 
+  <style>
+    :root{
+      --bg1:#ffe6ef;
+      --bg2:#ffb3c7;
+      --card:#ffffffee;
+      --text:#1f1f1f;
+      --yes:#22c55e;
+      --yesHover:#16a34a;
+      --no:#ef4444;
+      --noHover:#dc2626;
+    }
+
+    *{box-sizing:border-box}
+
+    html, body { height: 100%; }
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at top, var(--bg1), var(--bg2));
+      padding:18px;
+      overflow:hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .card{
+      width:min(680px, 94vw);
+      padding:28px 22px;
+      border-radius:18px;
+      background: var(--card);
+      box-shadow: 0 20px 60px rgba(0,0,0,.18);
+      text-align:center;
+      position:relative;
+    }
+
+    h1{
+      margin:0 0 6px;
+      font-size: clamp(22px, 4vw, 36px);
+      color:var(--text);
+    }
+
+    .intro{
+      font-size:14px;
+      opacity:.85;
+      margin-bottom:8px;
+    }
+
+    #sub{
+      margin: 0 0 16px;
+      color:#333;
+    }
+
+    .media-main{
+      width:100%;
+      max-width:540px;
+      margin:0 auto 18px;
+      border-radius:16px;
+      overflow:hidden;
+      background:#fff;
+      box-shadow: 0 10px 30px rgba(0,0,0,.12);
+    }
+    .media-main img{
+      width:100%;
+      height:auto;
+      display:block;
+    }
+
+    .btns{
+      position:relative;
+      width:100%;
+      height:130px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:44px;
+      margin-top:6px;
+    }
+
+    button{
+      border:0;
+      cursor:pointer;
+      padding:16px 28px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:18px;
+      transition: transform .12s ease, background .12s ease, filter .12s ease;
+      white-space:nowrap;
+      user-select:none;
+      touch-action: manipulation;
+      box-shadow: 0 10px 20px rgba(0,0,0,.12);
+    }
+
+    #yesBtn{
+      background:var(--yes);
+      color:#fff;
+      transform: scale(1);
+      z-index:5;
+    }
+    #yesBtn:active{ filter: brightness(.95); }
+    #yesBtn:hover{ background: var(--yesHover); }
+
+    #noBtn{
+      background:var(--no);
+      color:#fff;
+      z-index:4;
+    }
+    #noBtn:active{ filter: brightness(.95); }
+    #noBtn:hover{ background: var(--noHover); }
+
+    .hidden{ display:none; }
+
+    .media-final{
+      width:280px;
+      max-width: 80vw;
+      margin:14px auto 16px;
+      border-radius:16px;
+      overflow:hidden;
+      background:#fff;
+      box-shadow: 0 10px 30px rgba(0,0,0,.12);
+    }
+    .media-final img{
+      width:100%;
+      height:auto;
+      display:block;
+    }
+
+    .shake{
+      animation: shake .22s linear 1;
+    }
+    @keyframes shake{
+      0%{ transform: translateX(0); }
+      25%{ transform: translateX(-6px); }
+      50%{ transform: translateX(6px); }
+      75%{ transform: translateX(-6px); }
+      100%{ transform: translateX(0); }
+    }
+
+    .flash{
+      position:fixed;
+      inset:0;
+      background: rgba(255,255,255,.25);
+      pointer-events:none;
+      opacity:0;
+      transition: opacity .12s ease;
+    }
+    .flash.on{ opacity:1; }
+
+    .heart{
+      position:fixed;
+      width:14px;height:14px;
+      transform: rotate(45deg);
+      background: rgba(255,255,255,.85);
+      border-radius:2px;
+      animation: float 6s linear infinite;
+      pointer-events:none;
+    }
+    .heart::before,.heart::after{
+      content:"";
+      position:absolute;
+      width:14px;height:14px;
+      background:inherit;
+      border-radius:50%;
+    }
+    .heart::before{ left:-7px; top:0; }
+    .heart::after{ left:0; top:-7px; }
+
+    @keyframes float{
+      from{ transform: translateY(40vh) rotate(45deg); opacity:0; }
+      10%{opacity:.95}
+      to{ transform: translateY(-70vh) rotate(45deg); opacity:0; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="flash" id="flash"></div>
+
+  <!-- Écran 1 -->
+  <div class="card" id="screen1">
+    <h1>Tu veux être ma Valentine ? 🍓</h1>
+
+    <div class="intro">
+      Franui et bouquet trop beaux garantis si bonne réponse cochée ✅
+    </div>
+
+    <p id="sub">Réfléchis bien 😌</p>
+
+    <div class="media-main">
+      <img src="franui-roses.png" alt="Franui et roses">
+    </div>
+
+    <div class="btns" id="btnArea">
+      <button id="yesBtn">Oui</button>
+      <button id="noBtn">Non</button>
+    </div>
+  </div>
+
+  <!-- Écran 2 -->
+  <div class="card hidden" id="screen2">
+    <h1>Bien joué 😏</h1>
+
+    <div class="media-final">
+      <img src="https://media.giphy.com/media/jr0rH7t8CXq9sVcSN1/giphy.gif" alt="CR7 GIF">
+    </div>
+
+    <p style="font-size:20px;font-weight:900; margin: 8px 0 0; color:#111;">
+      Bien joué, bonne réponse. Tu vas donc recevoir des fleurs et des Franui pour égayer ton samedi.
+    </p>
+
+    <p style="margin-top:14px; opacity:.85;">
+      Si jamais bientôt t’es libre et que de ton côté tout est OK, je suis toujours chaud pour te battre au petit bac.
+    </p>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const btnArea = document.getElementById("btnArea");
+    const screen1 = document.getElementById("screen1");
+    const screen2 = document.getElementById("screen2");
+    const sub = document.getElementById("sub");
+    const flash = document.getElementById("flash");
+
+    const phrases = [
+      "T’es sûre ?",
+      "Vraiment ?",
+      "Allez… dis oui",
+      "Tu me brises le cœur",
+      "Dernière chance",
+      "Je retente encore"
+    ];
+
+    let count = 0;
+    let scale = 1;
+    let floating = false;
+    let touchHandled = false;
+
+    function vibratePattern(){
+      // Android ok; iPhone souvent ignore => fallback visuel
+      if (navigator.vibrate) navigator.vibrate([80,40,80]);
+    }
+
+    function feedbackNo(){
+      vibratePattern();
+
+      // fallback iPhone (ou si vibration ignorée)
+      screen1.classList.remove("shake");
+      void screen1.offsetWidth; // restart animation
+      screen1.classList.add("shake");
+
+      flash.classList.add("on");
+      setTimeout(() => flash.classList.remove("on"), 120);
+    }
+
+    function enableFloatingNo(){
+      if (floating) return;
+      floating = true;
+      noBtn.style.position = "absolute";
+      noBtn.style.left = "50%";
+      noBtn.style.top = "50%";
+      noBtn.style.transform = "translate(-50%,-50%)";
+    }
+
+    function moveNo(){
+      const rect = btnArea.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+      const padding = 10;
+
+      const maxX = Math.max(0, rect.width - btnRect.width - padding);
+      const maxY = Math.max(0, rect.height - btnRect.height - padding);
+
+      const x = padding + Math.random() * maxX;
+      const y = padding + Math.random() * maxY;
+
+      noBtn.style.left = x + "px";
+      noBtn.style.top = y + "px";
+      noBtn.style.transform = "translate(0,0)";
+    }
+
+    function growYes(){
+      scale = Math.min(2.2, scale + 0.15);
+      yesBtn.style.transform = "scale(" + scale + ")";
+    }
+
+    function onNoAttempt(){
+      feedbackNo();
+      count++;
+      sub.textContent = phrases[count % phrases.length];
+      growYes();
+      enableFloatingNo();
+      moveNo();
+    }
+
+    // PC: survol
+    noBtn.addEventListener("mouseenter", () => {
+      onNoAttempt();
+    });
+
+    // iPhone/Android: touchstart (évite le double déclenchement)
+    noBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      touchHandled = true;
+      onNoAttempt();
+      setTimeout(() => touchHandled = false, 350);
+    }, { passive: false });
+
+    // clic normal
+    noBtn.addEventListener("click", () => {
+      if (touchHandled) return;
+      onNoAttempt();
+    });
+
+    function spawnHeart(){
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.style.left = Math.random()*100 + "vw";
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 6500);
+    }
+
+    yesBtn.addEventListener("click", () => {
+      screen1.classList.add("hidden");
+      screen2.classList.remove("hidden");
+
+      if (navigator.vibrate) navigator.vibrate([120,60,120]);
+
+      for (let i=0;i<24;i++){
+        setTimeout(spawnHeart, i*70);
+      }
+    });
+  </script>
+</body>
+</html>
