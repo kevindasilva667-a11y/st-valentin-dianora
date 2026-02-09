@@ -1,1 +1,278 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Valentine</title>
+
+  <style>
+    :root{
+      --bg1:#ffe6ef;
+      --bg2:#ffb3c7;
+      --card:#ffffffcc;
+      --text:#1f1f1f;
+      --yes:#22c55e;
+      --yesHover:#16a34a;
+      --no:#ef4444;
+      --noHover:#dc2626;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at top, var(--bg1), var(--bg2));
+      overflow:hidden;
+      padding:18px;
+    }
+    .card{
+      width:min(620px, 94vw);
+      padding:28px 22px;
+      border-radius:18px;
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 60px rgba(0,0,0,.18);
+      text-align:center;
+    }
+    h1{
+      margin:0 0 8px;
+      color:var(--text);
+      font-size: clamp(22px, 4vw, 36px);
+    }
+    .intro{
+      font-size:14px;
+      opacity:.85;
+      margin-bottom:10px;
+    }
+    p{margin:0 0 18px; color:#333}
+
+    .media{
+      width:min(520px, 90%);
+      aspect-ratio: 16 / 9;
+      margin:14px auto 18px;
+      border-radius:18px;
+      overflow:hidden;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow: 0 10px 30px rgba(0,0,0,.12);
+    }
+    .media img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    /* Zone + boutons (au départ en FLEX => jamais collés) */
+    .btns{
+      position:relative;
+      width:100%;
+      height:120px;            /* place pour que "Non" se balade */
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:40px;                /* ÉCART FIXE entre Oui et Non */
+      margin-top:8px;
+    }
+
+    button{
+      border:0;
+      cursor:pointer;
+      padding:14px 24px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:16px;
+      transition: transform .12s ease, background .12s ease;
+      white-space:nowrap;
+      user-select:none;
+      touch-action: manipulation;
+      box-shadow: 0 10px 20px rgba(0,0,0,.10);
+    }
+
+    #yesBtn{
+      background:var(--yes);
+      color:white;
+      transform: scale(1);
+      z-index:5;
+    }
+    #yesBtn:hover{background:var(--yesHover)}
+
+    /* Non est "normal" au début (pas absolute) */
+    #noBtn{
+      background:var(--no);
+      color:white;
+      z-index:4;
+    }
+    #noBtn:hover{background:var(--noHover)}
+
+    .hidden{display:none}
+
+    /* Coeurs */
+    .heart{
+      position:absolute;
+      width:14px;height:14px;
+      transform: rotate(45deg);
+      background: rgba(255,255,255,.75);
+      border-radius: 2px;
+      animation: float 6s linear infinite;
+      pointer-events:none;
+    }
+    .heart::before,.heart::after{
+      content:"";
+      position:absolute;
+      width:14px;height:14px;
+      background:inherit;
+      border-radius:50%;
+    }
+    .heart::before{left:-7px; top:0}
+    .heart::after{left:0; top:-7px}
+    @keyframes float{
+      from{ transform: translateY(40vh) rotate(45deg); opacity:0; }
+      10%{opacity:.85}
+      to{ transform: translateY(-70vh) rotate(45deg); opacity:0; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Écran 1 -->
+  <div class="card" id="screen1">
+    <h1>Tu veux être ma Valentine ? 🍓</h1>
+
+    <div class="intro">
+      Franui et bouquet trop beaux garantis si bonne réponse cochée ✅
+    </div>
+
+    <p id="sub">Réfléchis bien 😌</p>
+
+    <div class="media">
+      <img src="franui-roses.png" alt="Franui et roses">
+    </div>
+
+    <div class="btns" id="btnArea">
+      <button id="yesBtn">Oui</button>
+      <button id="noBtn">Non</button>
+    </div>
+  </div>
+
+  <!-- Écran 2 -->
+  <div class="card hidden" id="screen2">
+    <h1>OUIIII 💖</h1>
+
+    <div class="media">
+      <img src="https://media.giphy.com/media/7vDoUoDZHoUQxMPkd7/giphy.gif" alt="CR7 SIUUU">
+    </div>
+
+    <p style="font-size:18px;font-weight:800;">
+      Pas de stress, mais si jamais t’es libre le 14 au soir (ou une autre date à ta guise) pour perdre au petit bac contre moi 😏
+      <br><br>
+      <span style="font-size:14px;opacity:0.8;">
+        (en même temps je te donne ton cadeau de noël)
+      </span>
+    </p>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const btnArea = document.getElementById("btnArea");
+    const screen1 = document.getElementById("screen1");
+    const screen2 = document.getElementById("screen2");
+    const sub = document.getElementById("sub");
+
+    const phrases = [
+      "T’es sûre ?",
+      "Vraiment ?",
+      "Allez… dis oui",
+      "Tu me brises le cœur",
+      "Dernière chance",
+      "Je retente encore"
+    ];
+
+    let count = 0;
+    let scale = 1;
+    let noIsFloating = false;
+
+    function enableFloatingNo(){
+      if (noIsFloating) return;
+      noIsFloating = true;
+
+      // On passe "Non" en absolute uniquement quand on commence à fuir
+      noBtn.style.position = "absolute";
+      noBtn.style.left = "50%";
+      noBtn.style.top = "50%";
+      noBtn.style.transform = "translate(-50%, -50%)";
+    }
+
+    function moveNo(){
+      const rect = btnArea.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+      const padding = 8;
+
+      const maxX = Math.max(0, rect.width - btnRect.width - padding);
+      const maxY = Math.max(0, rect.height - btnRect.height - padding);
+
+      const x = padding + Math.random() * maxX;
+      const y = padding + Math.random() * maxY;
+
+      noBtn.style.left = x + "px";
+      noBtn.style.top = y + "px";
+      noBtn.style.transform = "translate(0,0)";
+    }
+
+    function growYes(){
+      scale = Math.min(2.4, scale + 0.18);
+      yesBtn.style.transform = "scale(" + scale + ")";
+    }
+
+    function onNoAttempt(e){
+      // Empêche les clics involontaires sur mobile
+      if (e && e.type === "touchstart") e.preventDefault();
+
+      count++;
+      sub.textContent = phrases[count % phrases.length];
+      growYes();
+
+      enableFloatingNo();
+      moveNo();
+    }
+
+    // PC: dès que la souris approche le Non => il fuit
+    noBtn.addEventListener("mouseenter", onNoAttempt);
+
+    // Mobile: toucher => il fuit
+    noBtn.addEventListener("touchstart", onNoAttempt, { passive: false });
+
+    // Si elle arrive à cliquer quand même
+    noBtn.addEventListener("click", onNoAttempt);
+
+    function spawnHeart(){
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.style.left = Math.random() * 100 + "vw";
+      h.style.animationDuration = (4 + Math.random() * 4) + "s";
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 7000);
+    }
+
+    yesBtn.addEventListener("click", () => {
+      screen1.classList.add("hidden");
+      screen2.classList.remove("hidden");
+
+      for(let i=0;i<26;i++){
+        setTimeout(spawnHeart, i * 80);
+      }
+
+      if(navigator.vibrate){
+        navigator.vibrate([120,60,120]);
+      }
+    });
+  </script>
+</body>
+</html>
 
