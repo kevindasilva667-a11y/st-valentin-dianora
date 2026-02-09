@@ -1,1 +1,255 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Valentine</title>
 
+  <style>
+    :root{
+      --bg1:#ffe6ef;
+      --bg2:#ffb3c7;
+      --card:#ffffffee;
+      --text:#1f1f1f;
+      --yes:#22c55e;
+      --yesHover:#16a34a;
+      --no:#ef4444;
+      --noHover:#dc2626;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at top, var(--bg1), var(--bg2));
+      padding:18px;
+    }
+
+    .card{
+      width:min(640px, 94vw);
+      padding:28px 22px;
+      border-radius:18px;
+      background: var(--card);
+      box-shadow: 0 20px 60px rgba(0,0,0,.18);
+      text-align:center;
+    }
+
+    h1{
+      margin:0 0 6px;
+      font-size: clamp(22px, 4vw, 36px);
+      color:var(--text);
+    }
+
+    .intro{
+      font-size:14px;
+      opacity:.85;
+      margin-bottom:8px;
+    }
+
+    #sub{ margin-bottom:16px; }
+
+    /* Image Franui */
+    .media-main{
+      width:100%;
+      max-width:520px;
+      margin:0 auto 18px;
+      border-radius:16px;
+      overflow:hidden;
+    }
+    .media-main img{
+      width:100%;
+      height:auto;
+      display:block;
+    }
+
+    /* Zone boutons */
+    .btns{
+      position:relative;
+      height:120px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:40px;
+    }
+
+    button{
+      border:0;
+      cursor:pointer;
+      padding:14px 26px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:16px;
+      transition:.15s;
+      box-shadow: 0 10px 20px rgba(0,0,0,.12);
+    }
+
+    #yesBtn{ background:var(--yes); color:white; }
+    #yesBtn:hover{ background:var(--yesHover); }
+
+    #noBtn{ background:var(--no); color:white; }
+    #noBtn:hover{ background:var(--noHover); }
+
+    .hidden{ display:none; }
+
+    /* Écran final GIF */
+    .media-final{
+      width:260px;
+      margin:14px auto 16px;
+      border-radius:16px;
+      overflow:hidden;
+    }
+    .media-final img{
+      width:100%;
+      height:auto;
+      display:block;
+    }
+
+    /* Coeurs */
+    .heart{
+      position:fixed;
+      width:14px;height:14px;
+      transform: rotate(45deg);
+      background: rgba(255,255,255,.8);
+      border-radius:2px;
+      animation: float 6s linear infinite;
+      pointer-events:none;
+    }
+    .heart::before,.heart::after{
+      content:"";
+      position:absolute;
+      width:14px;height:14px;
+      background:inherit;
+      border-radius:50%;
+    }
+    .heart::before{left:-7px}
+    .heart::after{top:-7px}
+
+    @keyframes float{
+      from{ transform: translateY(40vh) rotate(45deg); opacity:0; }
+      10%{opacity:.9}
+      to{ transform: translateY(-70vh) rotate(45deg); opacity:0; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Écran 1 -->
+  <div class="card" id="screen1">
+    <h1>Tu veux être ma Valentine ? 🍓</h1>
+
+    <div class="intro">
+      Franui et bouquet trop beaux garantis si bonne réponse cochée ✅
+    </div>
+
+    <div id="sub">Réfléchis bien 😌</div>
+
+    <div class="media-main">
+      <img src="franui-roses.png" alt="Franui et roses">
+    </div>
+
+    <div class="btns" id="btnArea">
+      <button id="yesBtn">Oui</button>
+      <button id="noBtn">Non</button>
+    </div>
+  </div>
+
+  <!-- Écran 2 -->
+  <div class="card hidden" id="screen2">
+    <h1>OUIIII 💖</h1>
+
+    <div class="media-final">
+      <img src="https://media.giphy.com/media/jr0rH7t8CXq9sVcSN1/giphy.gif" alt="CR7 SIUUU">
+    </div>
+
+    <p style="font-size:18px;font-weight:800;">
+      Pas de stress, mais si jamais t’es libre le 14 au soir (ou une autre date à ta guise) pour perdre au petit bac contre moi 😏
+      <br><br>
+      <span style="font-size:14px;opacity:0.8;">
+        (en même temps je te donne ton cadeau de noël)
+      </span>
+    </p>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const btnArea = document.getElementById("btnArea");
+    const screen1 = document.getElementById("screen1");
+    const screen2 = document.getElementById("screen2");
+    const sub = document.getElementById("sub");
+
+    const phrases = [
+      "T’es sûre ?",
+      "Vraiment ?",
+      "Allez… dis oui",
+      "Tu me brises le cœur",
+      "Dernière chance",
+      "Je retente encore"
+    ];
+
+    let count = 0;
+    let scale = 1;
+    let floating = false;
+
+    function enableFloatingNo(){
+      if(floating) return;
+      floating = true;
+      noBtn.style.position = "absolute";
+      noBtn.style.left = "50%";
+      noBtn.style.top = "50%";
+      noBtn.style.transform = "translate(-50%,-50%)";
+    }
+
+    function moveNo(){
+      const rect = btnArea.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+      const maxX = rect.width - btnRect.width;
+      const maxY = rect.height - btnRect.height;
+      const x = Math.random()*Math.max(0,maxX);
+      const y = Math.random()*Math.max(0,maxY);
+      noBtn.style.left = x+"px";
+      noBtn.style.top = y+"px";
+      noBtn.style.transform = "translate(0,0)";
+    }
+
+    function growYes(){
+      scale = Math.min(2.2, scale + 0.15);
+      yesBtn.style.transform = "scale("+scale+")";
+    }
+
+    function onNo(){
+      count++;
+      sub.textContent = phrases[count % phrases.length];
+      growYes();
+      enableFloatingNo();
+      moveNo();
+    }
+
+    noBtn.addEventListener("mouseenter", onNo);
+    noBtn.addEventListener("touchstart", (e)=>{e.preventDefault(); onNo();}, {passive:false});
+    noBtn.addEventListener("click", onNo);
+
+    function spawnHeart(){
+      const h=document.createElement("div");
+      h.className="heart";
+      h.style.left=Math.random()*100+"vw";
+      document.body.appendChild(h);
+      setTimeout(()=>h.remove(),6000);
+    }
+
+    yesBtn.addEventListener("click", ()=>{
+      screen1.classList.add("hidden");
+      screen2.classList.remove("hidden");
+      for(let i=0;i<24;i++) setTimeout(spawnHeart, i*70);
+      if(navigator.vibrate) navigator.vibrate([120,60,120]);
+    });
+  </script>
+
+</body>
+</html>
