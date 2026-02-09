@@ -26,6 +26,7 @@
       font-family: system-ui, Arial, sans-serif;
       background: radial-gradient(circle at top, var(--bg1), var(--bg2));
       overflow:hidden;
+      padding:18px;
     }
 
     .card{
@@ -36,6 +37,7 @@
       backdrop-filter: blur(10px);
       box-shadow: 0 20px 60px rgba(0,0,0,.18);
       text-align:center;
+      position:relative;
     }
 
     h1{margin:0 0 10px}
@@ -51,6 +53,7 @@
       display:flex;
       align-items:center;
       justify-content:center;
+      box-shadow: 0 10px 30px rgba(0,0,0,.12);
     }
 
     .gif img{
@@ -77,6 +80,7 @@
       font-weight:800;
       font-size:16px;
       transition:.15s;
+      white-space:nowrap;
     }
 
     #yesBtn{
@@ -96,12 +100,14 @@
 
     .hidden{display:none}
 
+    /* Coeurs */
     .heart{
       position:absolute;
       width:14px;height:14px;
       transform: rotate(45deg);
       background: rgba(255,255,255,.7);
       animation: float 6s linear infinite;
+      pointer-events:none;
     }
     .heart::before,.heart::after{
       content:"";
@@ -123,8 +129,8 @@
 
 <body>
 
+<!-- Ecran 1 -->
 <div class="card" id="screen1">
-
   <h1 id="question">Tu veux être ma Valentine ? 🍓</h1>
   <p id="sub">Réfléchis bien 😌</p>
 
@@ -136,15 +142,19 @@
     <button id="yesBtn">Oui</button>
     <button id="noBtn">Non</button>
   </div>
-
 </div>
 
+<!-- Ecran 2 -->
 <div class="card hidden" id="screen2">
   <h1>OUIIII 💖</h1>
+
   <div class="gif">
-    <img src="franui-roses.png" alt="Franui et roses">
+    <img src="https://media.giphy.com/media/7vDoUoDZHoUQxMPkd7/giphy.gif" alt="CR7 SIUUU">
   </div>
-  <p style="font-size:18px;font-weight:800;">Rendez-vous le 14 ?</p>
+
+  <p style="font-size:18px;font-weight:800;">
+    Pas de stress, mais si jamais t’es libre le 14 au soir (ou une autre date à ta guise) pour perdre au petit bac contre moi 😏
+  </p>
 </div>
 
 <script>
@@ -170,8 +180,8 @@ let scale=1;
 function moveNo(){
   const rect=btnArea.getBoundingClientRect();
   const btnRect=noBtn.getBoundingClientRect();
-  const maxX=rect.width-btnRect.width;
-  const maxY=rect.height-btnRect.height;
+  const maxX=Math.max(0, rect.width-btnRect.width);
+  const maxY=Math.max(0, rect.height-btnRect.height);
   const x=Math.random()*maxX;
   const y=Math.random()*maxY;
   noBtn.style.left=x+"px";
@@ -184,6 +194,8 @@ function growYes(){
   yesBtn.style.transform="scale("+scale+")";
 }
 
+noBtn.addEventListener("mouseenter", ()=>{ if(count>0) moveNo(); });
+
 noBtn.addEventListener("click",()=>{
   count++;
   sub.textContent=phrases[count%phrases.length];
@@ -194,6 +206,8 @@ noBtn.addEventListener("click",()=>{
 yesBtn.addEventListener("click",()=>{
   screen1.classList.add("hidden");
   screen2.classList.remove("hidden");
+
+  // pluie de coeurs
   for(let i=0;i<25;i++){
     setTimeout(()=>{
       const h=document.createElement("div");
@@ -202,6 +216,11 @@ yesBtn.addEventListener("click",()=>{
       document.body.appendChild(h);
       setTimeout(()=>h.remove(),6000);
     },i*80);
+  }
+
+  // vibration mobile si dispo
+  if(navigator.vibrate){
+    navigator.vibrate([120,60,120]);
   }
 });
 </script>
